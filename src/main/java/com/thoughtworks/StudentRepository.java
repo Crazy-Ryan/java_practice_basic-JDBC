@@ -88,6 +88,23 @@ public class StudentRepository {
 
     public void update(String id, Student student) {
         // TODO:
+        Connection connection = DatabaseUtil.getConnection();
+        try {
+            String sqlQuery = "UPDATE " + TABLE_NAME +
+                    " SET id = ?,full_name = ?,gender = ?,admission_year = ?,birthday = ?,classId = ?" +
+                    " WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+            preparedStatement.setInt(1, Integer.parseInt(student.getId()));
+            preparedStatement.setString(2, student.getName());
+            preparedStatement.setString(3, student.getGender());
+            preparedStatement.setString(4, student.getAdmissionYear() + "");
+            preparedStatement.setDate(5, new Date(student.getBirthday().getTime()));
+            preparedStatement.setString(6, student.getClassId());
+            preparedStatement.setInt(7, Integer.parseInt(id));
+            preparedStatement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void delete(String id) {
