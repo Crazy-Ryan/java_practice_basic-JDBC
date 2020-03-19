@@ -44,9 +44,9 @@ public class StudentRepository {
                     "id,full_name,gender,admission_year,birthday,classId " +
                     "FROM " + TABLE_NAME;
             ResultSet resultSet = connection.createStatement().executeQuery(sqlQuery);
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 studentList.add(new Student(
-                        resultSet.getInt("id")+"",
+                        resultSet.getInt("id") + "",
                         resultSet.getString("full_name"),
                         resultSet.getString("gender"),
                         resultSet.getInt("admission_year"),
@@ -69,11 +69,11 @@ public class StudentRepository {
                     "FROM " + TABLE_NAME +
                     " WHERE classId = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.setString(1,classId);
+            preparedStatement.setString(1, classId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 studentList.add(new Student(
-                        resultSet.getInt("id")+"",
+                        resultSet.getInt("id") + "",
                         resultSet.getString("full_name"),
                         resultSet.getString("gender"),
                         resultSet.getInt("admission_year"),
@@ -109,5 +109,15 @@ public class StudentRepository {
 
     public void delete(String id) {
         // TODO:
+        Connection connection = DatabaseUtil.getConnection();
+        try {
+            String sqlQuery = "DELETE FROM " + TABLE_NAME +
+                    " WHERE id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+            preparedStatement.setInt(1, Integer.parseInt(id));
+            preparedStatement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
