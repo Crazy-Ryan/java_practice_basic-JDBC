@@ -3,11 +3,13 @@ package com.thoughtworks;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudentRepository {
+
+    public static final String TABLE_NAME = "student_info";
 
     public void save(List<Student> students) {
         students.forEach(this::save);
@@ -17,7 +19,7 @@ public class StudentRepository {
         // TODO:
         Connection connection = DatabaseUtil.getConnection();
         try {
-            String sqlCmd = "INSERT INTO student_info" +
+            String sqlCmd = "INSERT INTO " + TABLE_NAME +
                     "(id,full_name,gender,admission_year,birthday,classId)" +
                     "values(" + "?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sqlCmd); //预编译SQL，减少sql执行
@@ -35,7 +37,26 @@ public class StudentRepository {
 
     public List<Student> query() {
         // TODO:
-        return new ArrayList<>();
+        List<Student> studentList = new ArrayList<>();
+        Connection connection = DatabaseUtil.getConnection();
+        try {
+            String sqlQuery = "SELECT " +
+                    "id,full_name,gender,admission_year,birthday,classId " +
+                    "FROM " + TABLE_NAME;
+            ResultSet resultSet = connection.createStatement().executeQuery(sqlQuery);
+            while(resultSet.next()){
+                studentList.add(new Student(
+                        resultSet.getInt("id")+"",
+                        resultSet.getString("full_name"),
+                        resultSet.getString("gender"),
+                        resultSet.getInt("admission_year"),
+                        resultSet.getDate("birthday").toString(),
+                        resultSet.getString("classId")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return studentList;
     }
 
     public List<Student> queryByClassId(String classId) {
