@@ -61,7 +61,29 @@ public class StudentRepository {
 
     public List<Student> queryByClassId(String classId) {
         // TODO:
-        return new ArrayList<>();
+        List<Student> studentList = new ArrayList<>();
+        Connection connection = DatabaseUtil.getConnection();
+        try {
+            String sqlQuery = "SELECT " +
+                    "id,full_name,gender,admission_year,birthday,classId " +
+                    "FROM " + TABLE_NAME +
+                    " WHERE classId = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+            preparedStatement.setString(1,classId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while(resultSet.next()){
+                studentList.add(new Student(
+                        resultSet.getInt("id")+"",
+                        resultSet.getString("full_name"),
+                        resultSet.getString("gender"),
+                        resultSet.getInt("admission_year"),
+                        resultSet.getDate("birthday").toString(),
+                        resultSet.getString("classId")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return studentList;
     }
 
     public void update(String id, Student student) {
